@@ -1,0 +1,59 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import ThoughtCard from "@/components/ThoughtCard.astro";
+import { getCollection } from "astro:content";
+
+const allThoughts = (await getCollection("thoughts"))
+  .filter((t) => import.meta.env.DEV || !t.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Group by year
+const thoughtsByYear = allThoughts.reduce(
+  (acc, thought) => {
+    const year = thought.data.pubDate.getFullYear();
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(thought);
+    return acc;
+  },
+  {} as Record<number, typeof allThoughts>,
+);
+
+const years = Object.keys(thoughtsByYear)
+  .map(Number)
+  .sort((a, b) => b - a);
+
+const readingTime = (content: string) => {
+  const words = content.split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+};
+---
+
+<PageLayout title="Thoughts" description="Essays, reflections, and notes by Satender Kundu.">
+  <h1 class="text-3xl font-bold tracking-tight mb-8">Thoughts</h1>
+
+  {
+    years.map((year) => (
+      <section class="mb-8">
+        <h2 class="text-lg font-semibold text-[var(--color-text-muted)] mb-4">
+          {year}
+        </h2>
+        <div class="space-y-4">
+          {thoughtsByYear[year].map((thought) => (
+            <ThoughtCard
+              title={thought.data.title}
+              description={thought.data.description}
+              pubDate={thought.data.pubDate}
+              slug={thought.id}
+            />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    allThoughts.length === 0 && (
+      <p class="text-[var(--color-text-muted)]">No thoughts yet. Check back soon.</p>
+    )
+  }
+</PageLayout>

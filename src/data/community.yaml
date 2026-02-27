@@ -1,0 +1,7 @@
+- id: sample-nonprofit
+  organization: "Sample Non-Profit"
+  role: "Volunteer"
+  description: "Contributing to community initiatives and technology access programs."
+  startDate: 2023-06-01
+  url: https://example.com
+  type: non-profit

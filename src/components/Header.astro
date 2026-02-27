@@ -1,0 +1,113 @@
+---
+import Nav from "./Nav.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import { SITE } from "@/utils/constants";
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-bg)]/95 backdrop-blur-sm"
+>
+  <div class="mx-auto max-w-3xl px-4 py-4 flex items-center justify-between">
+    <a
+      href="/"
+      class="text-lg font-semibold text-[var(--color-text)] no-underline hover:no-underline"
+    >
+      {SITE.author}
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden md:flex items-center gap-4">
+      <Nav />
+      <ThemeToggle />
+    </div>
+
+    <!-- Mobile hamburger -->
+    <div class="flex items-center gap-2 md:hidden">
+      <ThemeToggle />
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        class="p-2 rounded-md hover:bg-[var(--color-surface)]"
+      >
+        <svg
+          class="w-5 h-5"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-[var(--color-border)] px-4 pb-4"
+  >
+    <Nav />
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    // Mobile menu toggle
+    const menuBtn = document.getElementById("mobile-menu-btn");
+    const menu = document.getElementById("mobile-menu");
+    if (menuBtn && menu) {
+      menuBtn.addEventListener("click", () => {
+        const isOpen = !menu.classList.contains("hidden");
+        menu.classList.toggle("hidden");
+        menuBtn.setAttribute("aria-expanded", String(!isOpen));
+        menuBtn.setAttribute(
+          "aria-label",
+          isOpen ? "Open navigation menu" : "Close navigation menu"
+        );
+      });
+    }
+
+    // Theme toggle (handles multiple buttons — desktop + mobile)
+    const themeButtons = document.querySelectorAll(".theme-toggle");
+    if (!themeButtons.length) return;
+
+    function updateThemeButtons() {
+      const isDark = document.documentElement.classList.contains("dark");
+      themeButtons.forEach(function (btn) {
+        btn.setAttribute(
+          "aria-label",
+          isDark ? "Switch to light mode" : "Switch to dark mode"
+        );
+        btn.querySelector(".sun").classList.toggle("hidden", !isDark);
+        btn.querySelector(".moon").classList.toggle("hidden", isDark);
+      });
+    }
+
+    themeButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        updateThemeButtons();
+      });
+    });
+
+    updateThemeButtons();
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", function (e) {
+        if (!localStorage.getItem("theme")) {
+          document.documentElement.classList.toggle("dark", e.matches);
+          updateThemeButtons();
+        }
+      });
+  })();
+</script>

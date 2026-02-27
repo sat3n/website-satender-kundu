@@ -1,0 +1,11 @@
+- platform: GitHub
+  url: https://github.com/sat3n
+  icon: github
+
+- platform: LinkedIn
+  url: https://linkedin.com/in/satenderkundu
+  icon: linkedin
+
+- platform: Email
+  url: mailto:hello@satenderkundu.com
+  icon: email

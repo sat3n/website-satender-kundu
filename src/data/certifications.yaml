@@ -1,0 +1,7 @@
+- id: sample-cert
+  title: "Sample Certification"
+  issuer: "Sample Issuer"
+  date: 2024-01-15
+  expiryDate: 2027-01-15
+  credentialUrl: https://example.com/verify
+  category: Cloud
