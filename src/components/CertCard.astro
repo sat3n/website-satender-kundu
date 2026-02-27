@@ -1,0 +1,59 @@
+---
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+  title: string;
+  issuer: string;
+  date: Date;
+  expiryDate?: Date;
+  credentialUrl?: string;
+}
+
+const { title, issuer, date, expiryDate, credentialUrl } = Astro.props;
+
+const isExpiringSoon =
+  expiryDate &&
+  expiryDate.getTime() - Date.now() < 90 * 24 * 60 * 60 * 1000 &&
+  expiryDate.getTime() > Date.now();
+
+const isExpired = expiryDate && expiryDate.getTime() < Date.now();
+---
+
+<div class="py-3 border-b border-[var(--color-border)] last:border-b-0">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="font-medium text-[var(--color-text)]">{title}</p>
+      <p class="text-sm text-[var(--color-text-muted)]">{issuer}</p>
+      <p class="mt-1 text-xs text-[var(--color-text-muted)]">
+        Issued <FormattedDate date={date} />
+        {
+          expiryDate && (
+            <span
+              class:list={[
+                isExpired && "text-red-500",
+                isExpiringSoon && "text-amber-500",
+              ]}
+            >
+              {" "}
+              &middot; {isExpired ? "Expired" : "Expires"}{" "}
+              <FormattedDate date={expiryDate} />
+            </span>
+          )
+        }
+      </p>
+    </div>
+    {
+      credentialUrl && (
+        <a
+          href={credentialUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] shrink-0"
+          aria-label={`Verify ${title} credential (opens in new tab)`}
+        >
+          Verify &rarr;
+        </a>
+      )
+    }
+  </div>
+</div>

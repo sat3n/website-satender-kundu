@@ -1,0 +1,21 @@
+- id: thinking-fast-slow
+  title: "Thinking, Fast and Slow"
+  author: Daniel Kahneman
+  status: read
+  year: 2025
+  rating: 5
+  category: Psychology
+  notes: A masterclass on cognitive biases and decision-making.
+
+- id: designing-data-intensive
+  title: "Designing Data-Intensive Applications"
+  author: Martin Kleppmann
+  status: reading
+  category: Technology
+  notes: The bible of distributed systems.
+
+- id: sapiens
+  title: "Sapiens"
+  author: Yuval Noah Harari
+  status: to-read
+  category: History

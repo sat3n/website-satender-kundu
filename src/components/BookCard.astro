@@ -1,0 +1,49 @@
+---
+interface Props {
+  title: string;
+  author: string;
+  rating?: number;
+  category?: string;
+  notes?: string;
+  link?: string;
+}
+
+const { title, author, rating, category, notes, link } = Astro.props;
+---
+
+<div class="py-3 border-b border-[var(--color-border)] last:border-b-0">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="font-medium text-[var(--color-text)]">
+        {
+          link ? (
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-[var(--color-accent)]"
+            >
+              {title}
+            </a>
+          ) : (
+            title
+          )
+        }
+      </p>
+      <p class="text-sm text-[var(--color-text-muted)]">by {author}</p>
+      {notes && <p class="mt-1 text-sm text-[var(--color-text-muted)]">{notes}</p>}
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      {category && (
+        <span class="text-xs px-2 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--color-text-muted)]">
+          {category}
+        </span>
+      )}
+      {rating && (
+        <span class="text-sm text-[var(--color-text-muted)]" aria-label={`${rating} out of 5 stars`}>
+          {"★".repeat(rating)}{"☆".repeat(5 - rating)}
+        </span>
+      )}
+    </div>
+  </div>
+</div>

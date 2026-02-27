@@ -1,0 +1,13 @@
+- id: machines-of-grace
+  title: "Machines of Loving Grace"
+  source: Dario Amodei
+  url: https://darioamodei.com/machines-of-loving-grace
+  category: AI
+  note: A compelling vision of how AI can genuinely help humanity.
+
+- id: teach-yourself-cs
+  title: "Teach Yourself Computer Science"
+  source: Bradfield CS
+  url: https://teachyourselfcs.com
+  category: Computer Science
+  note: The best guide to self-directed CS education.

@@ -1,0 +1,117 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import CertCard from "@/components/CertCard.astro";
+import CommunityCard from "@/components/CommunityCard.astro";
+import { getCollection } from "astro:content";
+
+const certifications = await getCollection("certifications");
+const communityEntries = await getCollection("community");
+
+// Group certs by category
+const certsByCategory = certifications.reduce(
+  (acc, cert) => {
+    const cat = cert.data.category || "General";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(cert);
+    return acc;
+  },
+  {} as Record<string, typeof certifications>,
+);
+
+// Split community into current and past
+const current = communityEntries.filter((c) => !c.data.endDate);
+const past = communityEntries.filter((c) => c.data.endDate);
+---
+
+<PageLayout
+  title="About"
+  description="About Satender Kundu — background, credentials, and community involvement."
+>
+  <h1 class="text-3xl font-bold tracking-tight mb-8">About</h1>
+
+  <!-- Bio -->
+  <section class="mb-12 space-y-4 text-[var(--color-text-muted)] leading-relaxed">
+    <p>
+      <!-- Replace with your extended bio -->
+      Hello, I'm Satender Kundu. This is where I share a bit more about myself,
+      my professional background, and the communities I'm part of.
+    </p>
+    <p>
+      <!-- Add more paragraphs as needed -->
+      More details coming soon. In the meantime, feel free to explore my
+      <a href="/thoughts">thoughts</a> or browse the <a href="/library">library</a>.
+    </p>
+  </section>
+
+  <!-- Credentials -->
+  {
+    certifications.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-xl font-semibold mb-4">Credentials</h2>
+        {Object.entries(certsByCategory).map(([category, certs]) => (
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
+              {category}
+            </h3>
+            {certs.map((cert) => (
+              <CertCard
+                title={cert.data.title}
+                issuer={cert.data.issuer}
+                date={cert.data.date}
+                expiryDate={cert.data.expiryDate}
+                credentialUrl={cert.data.credentialUrl}
+              />
+            ))}
+          </div>
+        ))}
+      </section>
+    )
+  }
+
+  <!-- Community -->
+  {
+    communityEntries.length > 0 && (
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Community</h2>
+
+        {current.length > 0 && (
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
+              Current
+            </h3>
+            {current.map((entry) => (
+              <CommunityCard
+                organization={entry.data.organization}
+                role={entry.data.role}
+                description={entry.data.description}
+                startDate={entry.data.startDate}
+                endDate={entry.data.endDate}
+                url={entry.data.url}
+                type={entry.data.type}
+              />
+            ))}
+          </div>
+        )}
+
+        {past.length > 0 && (
+          <div>
+            <h3 class="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
+              Past
+            </h3>
+            {past.map((entry) => (
+              <CommunityCard
+                organization={entry.data.organization}
+                role={entry.data.role}
+                description={entry.data.description}
+                startDate={entry.data.startDate}
+                endDate={entry.data.endDate}
+                url={entry.data.url}
+                type={entry.data.type}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    )
+  }
+</PageLayout>

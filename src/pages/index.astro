@@ -1,0 +1,68 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SocialLinks from "@/components/SocialLinks.astro";
+import ThoughtCard from "@/components/ThoughtCard.astro";
+import { getCollection } from "astro:content";
+import { personJsonLd } from "@/utils/jsonld";
+import { SITE } from "@/utils/constants";
+import { readFileSync } from "node:fs";
+import { parse } from "yaml";
+
+const socialLinks = parse(readFileSync("./src/data/social-links.yaml", "utf-8"));
+const jsonLd = personJsonLd(socialLinks);
+
+const thoughts = (await getCollection("thoughts"))
+  .filter((t) => !t.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout title={SITE.title} description={SITE.description} jsonLd={jsonLd}>
+  <div class="mx-auto max-w-3xl px-4 py-16">
+    <!-- Bio -->
+    <section class="mb-12">
+      <h1 class="text-3xl font-bold tracking-tight">Satender Kundu</h1>
+      <p class="mt-1 text-lg text-[var(--color-text-muted)]">
+        <!-- Replace with your tagline -->
+        Building things. Learning constantly.
+      </p>
+      <div class="mt-6 space-y-4 text-[var(--color-text-muted)] leading-relaxed">
+        <p>
+          <!-- Replace with your bio -->
+          Welcome to my corner of the internet. I write about technology,
+          share what I'm reading, and document things I find interesting along the way.
+        </p>
+      </div>
+      <div class="mt-6">
+        <SocialLinks />
+      </div>
+    </section>
+
+    <!-- Recent Thoughts -->
+    {
+      thoughts.length > 0 && (
+        <section>
+          <h2 class="text-xl font-semibold mb-4">Recent Thoughts</h2>
+          <div class="space-y-4">
+            {thoughts.map((thought) => (
+              <ThoughtCard
+                title={thought.data.title}
+                description={thought.data.description}
+                pubDate={thought.data.pubDate}
+                slug={thought.id}
+              />
+            ))}
+          </div>
+          <p class="mt-6">
+            <a
+              href="/thoughts"
+              class="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
+            >
+              View all thoughts &rarr;
+            </a>
+          </p>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>

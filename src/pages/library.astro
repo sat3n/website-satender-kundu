@@ -1,0 +1,111 @@
+---
+import PageLayout from "@/layouts/PageLayout.astro";
+import BookCard from "@/components/BookCard.astro";
+import ArticleCard from "@/components/ArticleCard.astro";
+import { getCollection } from "astro:content";
+import { itemListJsonLd } from "@/utils/jsonld";
+
+const books = await getCollection("books");
+const articles = await getCollection("articles");
+
+const reading = books.filter((b) => b.data.status === "reading");
+const read = books.filter((b) => b.data.status === "read");
+const toRead = books.filter((b) => b.data.status === "to-read");
+
+const jsonLd = itemListJsonLd({
+  name: "Reading Library",
+  description: "Books, articles, and papers curated by Satender Kundu.",
+  items: books.map((b, i) => ({ name: b.data.title, position: i + 1 })),
+});
+---
+
+<PageLayout
+  title="Library"
+  description="Books I've read, am reading, and plan to read — plus articles and papers worth sharing."
+  jsonLd={jsonLd}
+>
+  <h1 class="text-3xl font-bold tracking-tight mb-8">Library</h1>
+
+  <!-- Books -->
+  <section class="mb-12">
+    <h2 class="text-xl font-semibold mb-2">Books</h2>
+
+    {
+      reading.length > 0 && (
+        <div class="mb-6">
+          <h3 class="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
+            Currently Reading
+          </h3>
+          {reading.map((book) => (
+            <BookCard
+              title={book.data.title}
+              author={book.data.author}
+              category={book.data.category}
+              notes={book.data.notes}
+              link={book.data.link}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    {
+      read.length > 0 && (
+        <div class="mb-6">
+          <h3 class="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
+            Read
+          </h3>
+          {read.map((book) => (
+            <BookCard
+              title={book.data.title}
+              author={book.data.author}
+              rating={book.data.rating}
+              category={book.data.category}
+              notes={book.data.notes}
+              link={book.data.link}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    {
+      toRead.length > 0 && (
+        <div class="mb-6">
+          <h3 class="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-2">
+            To Read
+          </h3>
+          {toRead.map((book) => (
+            <BookCard
+              title={book.data.title}
+              author={book.data.author}
+              category={book.data.category}
+              link={book.data.link}
+            />
+          ))}
+        </div>
+      )
+    }
+  </section>
+
+  <!-- Articles & Papers -->
+  {
+    articles.length > 0 && (
+      <section>
+        <h2 class="text-xl font-semibold mb-2">Articles &amp; Papers</h2>
+        <p class="text-sm text-[var(--color-text-muted)] mb-4">
+          Things I've read and found worth sharing.
+        </p>
+        {articles.map((article) => (
+          <ArticleCard
+            title={article.data.title}
+            source={article.data.source}
+            url={article.data.url}
+            category={article.data.category}
+            note={article.data.note}
+          />
+        ))}
+      </section>
+    )
+  }
+</PageLayout>
